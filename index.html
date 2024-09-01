@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Running</title>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/http-vue-loader@1.4.2/src/httpVueLoader.min.js"></script>
+
+  <div id="app">
+    <!-- v-model links input fields with variables defined in data -->
+    <input type="text" v-model="name">
+    <p>{{ name }}</p>
+
+    <p>Input age</p>
+    <input type="number" v-model="age">
+    <!-- HTML tag (and children) displays only when condition is met -->
+    <div v-if="age >= 18">
+      <p>You're an adult</p>
+      <p>I'll say it again</p>
+    </div>
+
+    <!-- Example with else if and else -->
+    <input type="number" v-model="digits">
+    <p v-if="digits <=9">one digit</p>
+    <p v-else-if="digits <=99">two digits</p>
+    <p v-else>three digits</p>
+
+    <!-- Using template as a housing container -->
+    <!-- IMPORTANT! input values return a string.
+    Options:
+    1. use the == (loose equality) operator
+    2. equate digits to a string
+    3. (example below) use a computed function to convert input live -->
+    <template v-if="digitsNumber === 50">
+      <h1>Number 50</h1>
+      <p>Half-way there!</p>
+    </template>
+
+    <!-- v-for loop -->
+    <ul>
+      <li v-for="language in languages">{{ language }}</li>
+    </ul>
+
+    <!-- v-on:click   -->
+    <!-- <button v-on:click="counter++">Counter value: {{ counter }}</button> -->
+    <button v-on:click="increment">Counter value: {{ counter }}</button>
+    <button v-on:click="decrement">Counter value: {{ counter }}</button>
+
+    
+    <!-- v-on:keyup -->
+    <h1>To do</h1>
+    <ol>
+      <li v-for="activity in activities">
+        {{ activity }}
+      </li>
+    </ol>
+    <!-- v-on:keyup -->
+    Add activity:<input type="text" v-model="activity" v-on:keyup.enter="updateList" placeholder="Press enter to confirm">
+
+    <!-- v-on:submit -->
+    <table border="1">
+      <tr>
+        <td>Code</td>
+        <td>Desc</td>
+        <td>Price</td>
+      </tr>
+      <!-- Using template as a housing container AGAIN -->
+      <template v-for="item in items">
+        <tr>
+          <td>{{ item.code }}</td>
+          <td>{{ item.desc }}</td>
+          <td>{{ item.price }}</td>
+        </tr>
+      </template>
+    </table>
+    <!-- v-on:submit.prevent -->
+    <form v-on:submit.prevent="addItem">
+      <template v-for="key in Object.keys(item)">
+        <p>
+          <input type="text" v-model="item[key]">
+        </p>
+      </template>
+      <p>
+        <input type="submit" value="Add Item">
+      </p>
+    </form>
+
+    <!-- radio inputs -->
+    <template v-for="option in radioOptions">
+      <p>
+        <!-- using ":value" instead of simply "value" allows for a dynamic value, see :checked too -->
+        <input type="radio" v-model="studiesLevel" :value="option" :checked="isChecked(option)">
+        <label for="option">{{option}}</label>
+      </p>
+    </template>
+    <p>Your level of studies is: {{ studiesLevel }}</p>
+    
+    <!-- checkboxes -->
+    <p>
+      <input type="checkbox" v-model="terms">
+      I accept the terms & conditions
+    </p>
+    <button v-if="terms">Confirm</button>
+
+    <p v-for="language in languages">
+      <!-- forgot to change "value" to ":value" here and cost me a bit of time -->
+      <input type="checkbox" v-model="knownLanguages" :value="language" :checked="isKnown(language)">
+      {{ language }}
+    </p>
+    <ul>
+      <li v-for="knownLanguage in knownLanguages">{{ knownLanguage }}</li>
+    </ul>
+    <p>Number of languages I know: {{ knownLanguages.length }}</p>
+  </div>
+
+  
+  
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        name: '',
+        age: 0,
+        digits: '',
+        languages: ['C', 'C++', 'C#', 'Java', 'Ruby', 'Kotlin'],
+        counter: 0,
+        activity: '',
+        activities: [],
+        item: {
+          code: '',
+          desc: '',
+          price: '',
+        },
+        items: [],
+        radioOptions: ['No formal qualification', 'GCSEs', 'A-Levels', 'Degree', 'Masters', 'PhD'],
+        studiesLevel: '',
+        terms: false,
+        knownLanguages: []
+      },
+      created() {
+        // Sets default value of studiesLevel
+        this.studiesLevel = this.radioOptions[0];
+      },
+      computed: {
+        digitsNumber() {
+          return Number(this.digits);
+        }
+      },
+      methods: {
+        increment() {
+          this.counter++
+        },
+        decrement() {
+          this.counter--
+        },
+        updateList() {
+          this.activities.push(this.activity);
+          this.activity = '';
+        },
+        addItem() {
+          this.items.push(this.item),
+          this.item = {
+            code: '',
+            desc: '',
+            price: '',
+          }
+        },
+        isChecked(option) {
+          return this.studiesLevel === option;
+        },
+        isKnown(language) {
+          return this.knownLanguages.includes(language)
+        }
+      }
+    })
+  </script>
+
+</body>
+</html>
